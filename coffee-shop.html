@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Coffee Masters</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="coffee-shop-styles.css" />
+    </head>
+    <body>
+        <section class="app">
+            <section class="header dark-color">
+                <img src="assets/images/coffee_masters_logo.png" alt="logo" />
+                <h1>Coffee Masters</h1>
+            </section>
+            <section class="order-page">
+                <div class="items-and-inputs">
+                    <div class="items card">
+                        <h2>ITEMS</h2>
+                        <ul>
+                            <li class="item">
+                                <p>1x</p>
+                                <div class="item-description">
+                                    <h4>Cappucino</h4>
+                                    <p>Lite foam</p>
+                                </div>
+                                <h4>$3.35</h4>
+                            </li>
+                            <li class="item">
+                                <p>1x</p>
+                                <div class="item-description">
+                                    <h4>Cappucino</h4>
+                                    <p>Lite foam</p>
+                                </div>
+                                <h4>$3.35</h4>
+                            </li>
+                            <li class="item">
+                                <p>1x</p>
+                                <div class="item-description">
+                                    <h4>Cappucino</h4>
+                                    <p>Lite foam</p>
+                                </div>
+                                <h4>$3.35</h4>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="user-inputs">
+                        <div class="name card">
+                            <h2>NAME</h2>
+                            <div class="group name-input">
+                                <label for="example" class="input-label"
+                                    >Name for order</label
+                                >
+                                <input
+                                    id="example"
+                                    class="input width-100"
+                                    placeholder="client name..."
+                                />
+                            </div>
+                        </div>
+                        <div class="payment card">
+                            <h2>PAYMENT</h2>
+                            <div class="group">
+                                <label for="card-number" class="input-label"
+                                    >Card Number</label
+                                >
+                                <input
+                                    id="card-number"
+                                    class="input width-100"
+                                    placeholder="client name..."
+                                />
+                            </div>
+                            <div class="group">
+                                <label for="example" class="input-label"
+                                    >CCV Number</label
+                                >
+                                <input
+                                    id="example"
+                                    class="input"
+                                    placeholder="client name..."
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sub-totals flex-center-center">
+                    <div class="left">
+                        <p>Subtotal:</p>
+                        <p>Tax:</p>
+                        <p>Total:</p>
+                    </div>
+                    <div class="right">
+                        <p>$9.65</p>
+                        <p>$0.82</p>
+                        <p>$10.47</p>
+                    </div>
+                </div>
+                <div class="place-order flex-center-center">
+                    <button>Place Order</button>
+                </div>
+            </section>
+        </section>
+    </body>
+</html>

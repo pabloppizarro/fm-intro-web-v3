@@ -1,0 +1,156 @@
+/*SHARED CSS */
+* {
+    font-family: "Open Sans", sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    /* padding: 1rem; */
+}
+h1,
+h2,
+h3,
+label {
+    /* color: #ede1d5; */
+    color: #b08968;
+    /* color: #412316; */
+}
+h2 {
+    font-size: 1rem;
+}
+.dark-color {
+    background-color: #412316;
+}
+
+.group {
+    position: relative;
+    display: inline-block;
+}
+
+.flex-center-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input {
+    border: none;
+    background-color: #eee1d5;
+    border: 1px solid #b08968;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+}
+
+.input-label {
+    background-color: #eee1d5;
+    color: #b08968;
+    font-size: 11px;
+    position: absolute;
+    left: 25px;
+    top: -7px;
+    padding: 0 2px;
+}
+.card {
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    padding: 1rem;
+    background-color: #eee1d5;
+    border-radius: 0.5rem;
+    margin: 1rem 0rem;
+}
+section {
+    padding: 1rem;
+}
+.width-100 {
+    width: 100%;
+}
+
+/* END SHARED CSS */
+
+.app {
+    display: grid;
+    background-color: #f0f0f0;
+    padding: 0;
+    height: 100vh;
+}
+.header {
+    width: 100%;
+    max-height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+.header h1 {
+    color: #eee1d5;
+}
+img {
+    max-width: 50px;
+    margin: 0 10px;
+}
+.order-page {
+    display: grid;
+    grid-template-areas:
+        "items-and-inputs"
+        "sub-totals"
+        "place-order";
+    gap: 1rem;
+}
+
+.items-and-inputs {
+    grid-area: items-and-inputs;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: flex-start;
+}
+ul {
+    list-style: none;
+
+    padding: 0;
+}
+ul .item {
+    display: grid;
+    grid-template-columns: 1fr 10fr 1fr;
+    align-items: baseline;
+    justify-items: baseline;
+    border-bottom: 2px solid #b08968;
+    padding: 1rem 0rem;
+}
+ul .item-description p {
+    color: #b08968;
+}
+li:last-child {
+    border: none;
+}
+.item > * {
+    padding: 0rem 1rem;
+}
+.name {
+    display: grid;
+    gap: 2rem;
+}
+.payment {
+    display: grid;
+    gap: 2rem;
+}
+
+.sub-totals {
+    grid-area: sub-totals;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+    width: 40%;
+    margin: 0 auto;
+}
+.sub-totals div p:last-child {
+    font-weight: bold;
+}
+.place-order {
+    grid-area: place-order;
+}
+.place-order button {
+    min-width: 80%;
+    height: 40px;
+    background-color: #b08968;
+    border: none;
+    border-radius: 2rem;
+}
