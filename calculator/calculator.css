@@ -3,7 +3,6 @@
     box-sizing: border-box;
 }
 
-
 .calculator {
     display: grid;
     grid-template-rows: 1fr 5fr;
@@ -52,6 +51,9 @@
 }
 .btn-calc:hover {
     filter: brightness(1.3);
+}
+.btn-calc:active {
+    filter: brightness(0.8);
 }
 
 .double {
