@@ -1,114 +1,111 @@
-const numberButtons = document.querySelectorAll(".number");
-const operatorButtons = document.querySelectorAll(".operator");
-const backButton = document.querySelector(".back");
-const resetButton = document.querySelector(".reset");
 const screenValue = document.querySelector(".screen-value");
-const resultButton = document.querySelector(".result");
-let stateA = [];
-let stateB = [];
-let lastOperator = "";
+let lastOperator = null;
+let buffer = "0";
+let runningTotal = 0;
 
-onReset();
-bindButtons();
+initCalculator();
 
 function onReset() {
-    stateA = [];
-    stateB = [];
-    lastOperator = "";
+    lastOperator = null;
+    buffer = "0";
 }
 
-function bindButtons() {
-    numberButtons.forEach((numberButton) => {
-        numberButton.addEventListener("click", (e) => {
-            const numString = e.target.innerText;
-            // console.log(numString);
-            // console.log(typeof toNumber(numString));
-            setState(numString);
+function initCalculator() {
+    document
+        .querySelector(".calc-buttons")
+        .addEventListener("click", function (event) {
+            onButtonClicked(event.target.innerText);
         });
-    });
-    operatorButtons.forEach((operatorButton) => {
-        operatorButton.addEventListener("click", (event) => {
-            onOperatorChanged(event.target.innerText);
-        });
-    });
-    resetButton.addEventListener("click", () => {
-        onReset();
-        render();
-    });
-    backButton.addEventListener("click", () => onBack());
-    resultButton.addEventListener("click", () =>
-        doMath(lastOperator, stateA, stateB)
-    );
 }
 
-function onBack() {
-    let actualState = getStateArray();
-    if (actualState.length > 0) {
-        actualState = actualState.pop();
+function onButtonClicked(value) {
+    if (isNaN(parseInt(value))) {
+        handleSymbol(value);
+    } else {
+        handleNumber(value);
     }
-    render(toStringState(getStateArray()));
+    render();
 }
 
-function render(newState = "0") {
-    screenValue.innerText = newState;
-}
-function setState(newState) {
-    getStateArray().push(newState);
-    const stringNumbers = getStateArray().join("");
-    render(stringNumbers);
-}
-
-function getStateArray() {
-    return lastOperator === "" ? stateA : stateB;
-}
-
-function sum(numA, numB) {
-    return numA + numB;
-}
-function rest(numA, numB) {
-    return numA - numB;
-}
-function multiply(numA, numB) {
-    return numA * numB;
-}
-function divide(numA, numB) {
-    return numA / numB;
-}
-
-function toStringState(state) {
-    return state.toString();
-}
-function toNumberState(state) {
-    return state.length > 0 ? parseInt(state.join("")) : 0;
-}
-
-function onOperatorChanged(operator) {
-    // console.log(`Operator clicked ! -> ${operator}`);
-    lastOperator = operator;
-}
-
-function doMath(operator, stateA, stateB) {
-    if (operator === "") return;
-    let result;
-    console.log(` lets do ${stateA} ${operator} ${stateB}`);
-    const numA = toNumberState(stateA);
-    const numB = toNumberState(stateB);
-    switch (operator) {
+function handleSymbol(symbol) {
+    switch (symbol) {
+        case "C":
+            onReset();
+            break;
+        case "←":
+            onBack();
+            break;
         case "+":
-            result = sum(numA, numB);
-            break;
         case "÷":
-            result = divide(numA, numB);
-            break;
         case "×":
-            result = multiply(numA, numB);
-            break;
         case "-":
-            result = rest(numA, numB);
+            doMath(symbol);
+            break;
+        case "=":
+            if (lastOperator === null) {
+                return;
+            }
+            flushOperation(parseInt(buffer));
+            lastOperator = null;
+            buffer = runningTotal;
+            runningTotal = 0;
             break;
         default:
             break;
     }
-    render(toStringState(result));
-    onReset();
+}
+function handleNumber(value) {
+    setState(value);
+}
+
+function onBack() {
+    if (buffer.length === 1) {
+        buffer = "0";
+    } else {
+        buffer = buffer.substring(0, buffer.length - 1);
+    }
+}
+
+function render() {
+    screenValue.innerText = buffer;
+}
+function setState(newState) {
+    if (buffer === "0") {
+        buffer = newState;
+    } else {
+        buffer += newState;
+    }
+}
+
+function doMath(operator) {
+    if (buffer === "0") return;
+
+    const numberBuffer = parseInt(buffer);
+    if (runningTotal === 0) {
+        runningTotal = numberBuffer;
+    } else {
+        flushOperation(numberBuffer);
+    }
+    console.log(runningTotal);
+    lastOperator = operator;
+    buffer = "0";
+}
+
+function flushOperation(number) {
+    switch (lastOperator) {
+        case "+":
+            runningTotal += number;
+            break;
+        case "÷":
+            runningTotal /= number;
+            break;
+        case "×":
+            runningTotal *= number;
+            break;
+        case "-":
+            runningTotal -= number;
+            break;
+        default:
+            break;
+    }
 }
