@@ -1,0 +1,7 @@
+* {
+    font-family: monospace;
+    box-sizing: border-box;
+}
+.title {
+    color: red;
+}
