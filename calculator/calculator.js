@@ -47,7 +47,7 @@ function handleSymbol(symbol) {
             }
             flushOperation(parseInt(buffer));
             lastOperator = null;
-            buffer = runningTotal;
+            buffer = +runningTotal;
             runningTotal = 0;
             break;
         default:
