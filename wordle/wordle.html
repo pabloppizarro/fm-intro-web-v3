@@ -12,7 +12,8 @@
             <h1 class="main-title">My Sweet Wordle</h1>
         </header>
         <section class="wordle">
-            <div class="loading">Loading...</div>
+            <div class="status"><p class="status-text">⏳ Loading...</p></div>
+            <i>tip: after type your word, press "Enter" key to check.</i>
             <div class="scoreboard">
                 <div class="scoreboard-letter" id="letter-0"></div>
                 <div class="scoreboard-letter" id="letter-1"></div>
@@ -48,11 +49,17 @@
         </section>
         <footer class="footer">
             <p class="footer-info">Final project from Brian Holt FEM Course:</p>
-            <a
-                href="https://frontendmasters.com/courses/web-development-v3/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Complete Intro to Web Development, v3</a
+            <p>
+                <a
+                    href="https://frontendmasters.com/courses/web-development-v3/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Complete Intro to Web Development, v3</a
+                >
+            </p>
+            <i
+                >this game uses a public words API, I dont take responsability
+                for any final word that came from API.</i
             >
         </footer>
         <script src="wordle.js"></script>
