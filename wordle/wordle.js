@@ -2,11 +2,12 @@ console.log("Hi Wordle People");
 
 const GET_API_URL = "https://words.dev-apis.com/word-of-the-day";
 const POST_API_URL = "https://words.dev-apis.com/validate-word";
-
+const ANSWER_LENGTH = 5;
+const ROUNDS = 6;
 window.addEventListener("keydown", pressKeyHandler, false);
 const statusTextElement = document.querySelector(".status-text");
 
-const letters = document.querySelectorAll(".scoreboard");
+const letters = document.querySelectorAll(".scoreboard-letter");
 
 const statusText = new Map();
 statusText.set("LOADING", "⏳ Loading word from API...");
@@ -18,86 +19,114 @@ statusText.set("WIN", "🥳🥳YEEEEY!! CONGRATS WINNER🥳🥳");
 let lastWord = "";
 let currentIndex = 0;
 let wordOfTheDay = null;
-let lastWordSet = new Set();
-let lastWordMap = new Map();
+//Brian variables:
+let wordsOfTheDayParts = "";
+let done = false;
+let currentRow = 0;
+//
+
 fetchWordleWordOfTheDay();
 
 async function fetchWordleWordOfTheDay() {
     showStatusText("LOADING");
     const response = await fetch(GET_API_URL).then((res) => res.json());
-    console.log("WORD OF THE DAY -> ", response);
-    wordOfTheDay = response.word;
+    // console.log("WORD OF THE DAY -> ", response);
+    wordOfTheDay = response.word.toUpperCase();
+    wordsOfTheDayParts = wordOfTheDay.split("");
     showStatusText("READY");
 }
 
 function pressKeyHandler(event) {
     // console.log(event.key);
+    if (done) return;
     if (isLetter(event.key)) {
-        handleLetter(event.key);
-    }
-    if (event.key === "Enter") {
+        handleLetter(event.key.toUpperCase());
+    } else if (event.key === "Enter") {
         handleEnter();
-    }
-    if (event.key === "Backspace") {
+    } else if (event.key === "Backspace") {
         handleBackspace();
+    } else {
+        // do nothing
     }
 }
 
 function handleLetter(key) {
-    if (lastWord.length < 5) {
-        showStatusText("READY");
-        render(currentIndex, key);
+    if (lastWord.length < ANSWER_LENGTH) {
         lastWord += key;
-        lastWordSet.add(key);
-        lastWordMap.set(currentIndex, key);
+        showStatusText("READY");
         currentIndex++;
+    } else {
+        lastWord = lastWord.substring(0, lastWord.length - 1) + key;
     }
+    letters[ANSWER_LENGTH * currentRow + lastWord.length - 1].innerText = key;
 }
 
-function handleEnter() {
-    if (currentIndex < 30) {
-        if (lastWord.length === 5) {
-            console.log("Enter here!");
-            validateLetters();
-            if (wordOfTheDay === lastWord) {
-                handleWin();
-            } else {
-                //go to next letter row
-                handleLose();
-            }
+async function handleEnter() {
+    if (lastWord.length !== ANSWER_LENGTH) return;
+    showStatusText("LOADING");
+    const res = await fetch(POST_API_URL, {
+        method: "POST",
+        body: JSON.stringify({ word: lastWord }),
+    });
+    const validWord = await res.json().then((r) => r.validWord);
+    if (!validWord) {
+        markInvalidWord();
+        showStatusText("READY");
+        return;
+    }
+    //Brian solution... he said that this took him a few iterations to get a more precise solution.
+    const splitCurrentWord = lastWord.split("");
+    const map = makeMap(wordsOfTheDayParts);
+    for (let i = 0; i < ANSWER_LENGTH; i++) {
+        if (splitCurrentWord[i] === wordsOfTheDayParts[i]) {
+            const currIndex = currentRow * ANSWER_LENGTH + i;
+            addColorClass(currIndex, "correct");
+            map[splitCurrentWord[i]]--;
         }
-    } else {
-        console.log("You probably lost eheh ");
-        handleLose();
+    }
+
+    for (let i = 0; i < ANSWER_LENGTH; i++) {
+        const currIndex = currentRow * ANSWER_LENGTH + i;
+        if (splitCurrentWord[i] === wordsOfTheDayParts[i]) {
+            //do nothing
+        } else if (
+            wordsOfTheDayParts.includes(splitCurrentWord[i]) &&
+            map[splitCurrentWord[i]] > 0
+        ) {
+            addColorClass(currIndex, "close");
+            map[splitCurrentWord[i]]--;
+        } else {
+            addColorClass(currIndex, "wrong");
+        }
+    }
+    currentRow++;
+    showStatusText("READY");
+    if (lastWord === wordOfTheDay) {
+        statusTextElement.classList.add("rainbow");
+        document.querySelector(".main-title").classList.add("rainbow");
+        showStatusText("WIN");
+        // alert("Yea you WIN!!");
+        done = true;
+    } else if (currentRow === ROUNDS) {
         showStatusText("NOPE");
         alert("you lose, the word was " + wordOfTheDay);
+        done = true;
     }
-}
-
-function handleWin() {
-    showStatusText("WIN");
     lastWord = "";
-    currentIndex = 0;
-    alert("Yea you WIN!!");
 }
-function handleLose() {
-    showStatusText("TRY");
-    // validateLetters();
-    lastWord = "";
+function markInvalidWord() {
+    for (let i = 0; i < ANSWER_LENGTH; i++) {
+        const currIndex = currentRow * ANSWER_LENGTH + i;
+        letters[currIndex].classList.remove("invalid");
+        setTimeout(() => {
+            addColorClass(currIndex, "invalid");
+        }, 10);
+    }
 }
 
 function handleBackspace() {
-    if (lastWord.length > 0) {
-        console.log("backspace");
-        lastWord = lastWord.substring(0, lastWord.length - 1);
-        currentIndex--;
-        render(currentIndex, "");
-    }
-}
-
-function render(index, value) {
-    const currLetter = document.querySelector(`#letter-${index}`);
-    currLetter.innerHTML = value;
+    lastWord = lastWord.substring(0, lastWord.length - 1);
+    letters[ANSWER_LENGTH * currentRow + lastWord.length].innerText = "";
 }
 
 function isLetter(letter) {
@@ -112,36 +141,20 @@ function hideStatusText() {
     statusTextElement.style.visibility = "hidden";
 }
 
-function validateLetters() {
-    // console.log(lastWordSet);
-    // console.log(wordOfTheDay);
-    let startWordCurrIndex = currentIndex - 5;
-    console.log(currentIndex);
-    let boardWordIndex = 0;
-    for (let i = startWordCurrIndex; i < currentIndex; i++) {
-        const triedWord = lastWordMap.get(i);
-        if (wordOfTheDay.includes(triedWord)) {
-            let wordIndex = wordOfTheDay.indexOf(triedWord);
-            console.log(wordIndex);
-            if (wordIndex === boardWordIndex) {
-                addColorClass(i, "correct");
-            } else {
-                addColorClass(i, "close");
-            }
+function makeMap(array) {
+    const obj = {};
+    for (let i = 0; i < array.length; i++) {
+        const letter = array[i];
+        if (obj[letter]) {
+            obj[letter]++;
         } else {
-            addColorClass(i, "wrong");
+            obj[letter] = 1;
         }
-        boardWordIndex++;
     }
-    // wordOfTheDay.split("").forEach((letter, index) => {
-    //     startWordCurrIndex++;
-    // });
+    return obj;
 }
 
-// O C T A L
-// S O T L A
-
 function addColorClass(index, colorClass) {
-    const currLetter = document.querySelector(`#letter-${index}`);
-    currLetter.classList.add(colorClass);
+    letters[index].classList.add(colorClass);
+    // currLetter.classList.add(colorClass);
 }
